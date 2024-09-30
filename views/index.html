@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+</head>
+<body>
+    <form action="/search" method="POST">
+        <input type="text" name="searchTerm" placeholder="Enter search term" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        const form = document.querySelector('form');
+        form.onsubmit = async function (event) {
+            event.preventDefault();
+
+            const searchTerm = form.searchTerm.value;
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ searchTerm })
+            });
+            const data = await response.json();
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = data.data.map(result => `
+                <p><strong>${result.title}</strong> (${result.type}) <a href="${result.link}">Link</a></p>
+            `).join('');
+        };
+    </script>
+</body>
+</html>
